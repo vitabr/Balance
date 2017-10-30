@@ -2,6 +2,7 @@ package com.app4each.balance.view;
 
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.app4each.balance.R;
 import com.app4each.balance.model.Tick;
 import com.app4each.balance.view.adapters.RecyclerViewAdapter;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -95,6 +97,20 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        // Add watcher for DB changes
+        Realm.getDefaultInstance().addChangeListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Remove watcher for DB changes
+        Realm.getDefaultInstance().removeChangeListener(this);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_scrolling, menu);
@@ -120,43 +136,51 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
     //*************************************/
     private void initChart(){
         mChart =  findViewById(R.id.chart);
-        mChart.setDrawGridBackground(true);
+        mChart.setDrawGridBackground(false);
+        mChart.setBackgroundTintMode(PorterDuff.Mode.SCREEN);
 
         // no description text
         mChart.getDescription().setEnabled(false);
 
+        // Remove axis values
+        mChart.getAxisLeft().setDrawLabels(false);
+        mChart.getAxisRight().setDrawLabels(false);
+        mChart.getXAxis().setDrawLabels(false);
+        mChart.getLegend().setEnabled(false);
+
         // enable touch gestures
-        mChart.setTouchEnabled(true);
+        mChart.setTouchEnabled(false);
 
         // enable scaling and dragging
         mChart.setDragEnabled(false);
         mChart.setScaleEnabled(false);
-        // mChart.setScaleXEnabled(true);
-        // mChart.setScaleYEnabled(true);
+        mChart.setScaleXEnabled(false);
+        mChart.setScaleYEnabled(false);
 
         // if disabled, scaling can be done on x- and y-axis separately
         mChart.setPinchZoom(false);
 
         // set an alternative background color
-        mChart.setBackgroundColor(Color.GRAY);
+        mChart.setBackgroundColor(Color.TRANSPARENT);
+        //mChart.setBackgroundColor(Color.GRAY);
+        mChart.setAlpha(0.5f);
 
         updateChartData();
+
+        // Remove spaces on sides
+        mChart.setViewPortOffsets(0, 0, 0, 0);
+        mChart.invalidate();
     }
 
 
     private void updateChartData() {
 
-
-
-        //for (int i = 0; i < count; i++) {
-
-        //    float val = (float) (Math.random() * range) + 3;
-        //    values.add(new Entry(i, val, getResources().getDrawable(R.drawable.star)));
-        //}
-
-
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Tick> ticks = realm.where(Tick.class).findAll();
+
+        if (ticks.size() == 0)
+            return;
+
         ArrayList<Entry> values = new ArrayList<Entry>();
 
         for (Tick tick : ticks) {
@@ -175,36 +199,26 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
             // create a dataset and give it a type
             set1 = new LineDataSet(values, "DataSet 1");
 
-            set1.setDrawIcons(false);
-
+            //set1.setDrawIcons(false);
             // set the line to be drawn like this "- - - - - -"
-            set1.enableDashedLine(10f, 5f, 0f);
-            set1.enableDashedHighlightLine(10f, 5f, 0f);
-            set1.setColor(Color.BLACK);
-            set1.setCircleColor(Color.BLACK);
-            set1.setLineWidth(1f);
-            set1.setCircleRadius(3f);
-            set1.setDrawCircleHole(false);
-            set1.setValueTextSize(9f);
-            set1.setDrawFilled(true);
-            set1.setFormLineWidth(1f);
-            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-            set1.setFormSize(15.f);
+            //set1.enableDashedLine(10f, 5f, 0f);
+            //set1.enableDashedHighlightLine(10f, 5f, 0f);
 
-//            if (Utils.getSDKInt() >= 18) {
-//                // fill drawable only supported on api level 18 and above
-//                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
-//                set1.setFillDrawable(drawable);
-//            }
-//            else {
-                set1.setFillColor(Color.BLACK);
-//            }
+            set1.setCircleColor(Color.TRANSPARENT);
+            set1.setColor(Color.BLACK);
+            set1.setFillColor(Color.GRAY);
+            set1.setLineWidth(1f);
+            set1.setCircleRadius(0f);
+            set1.setDrawCircleHole(false);
+            set1.setValueTextSize(0f);
+            set1.setDrawFilled(true);
 
             ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
             dataSets.add(set1); // add the datasets
 
             // create a data object with the datasets
             LineData data = new LineData(dataSets);
+            //data.setDrawValues(false);
 
             // set data
             mChart.setData(data);

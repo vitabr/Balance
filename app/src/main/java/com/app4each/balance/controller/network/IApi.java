@@ -18,6 +18,6 @@ public interface IApi {
     Call<Balance> getBalance();
 
     @GET("bins/h1bj3")
-    Call<Result<List<List<Integer>>>> getChart();
+    Call<Result> getChart();
 
 }

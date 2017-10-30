@@ -7,13 +7,13 @@ import io.realm.RealmObject;
  */
 
 public class Tick extends RealmObject {
-    public int min;
-    public int max;
+    public float min;
+    public float max;
 
 
     public Tick(){ }
 
-    public Tick(int min, int max){
+    public Tick(float min, float max){
         this.min = min;
         this.max = max;
     }

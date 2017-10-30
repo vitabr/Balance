@@ -114,22 +114,23 @@ public class Api implements IEvent {
             throw new ExceptionInInitializerError("Must call init() first!");
         }
 
-        sService.getChart().enqueue(new Callback<Result<List<List<Integer>>>>() {
+        sService.getChart().enqueue(new Callback<Result>() {
             @Override
-            public void onResponse(Call<Result<List<List<Integer>>>> call, Response<Result<List<List<Integer>>>> response) {
+            public void onResponse(Call<Result> call, Response<Result> response) {
 
                 try {
 
                     Log.e("XXX", "url: " + call.request().url().toString());
-                    final Result<List<List<Integer>>> result = response.body();
+                    final Result result = response.body();
                     Log.e("XXX", "JSON: " + result);
 
                     Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
 
-                            for (List<Integer> tick : result.data) {
-                                realm.copyToRealmOrUpdate(new Tick(tick.get(0), tick.get(1)));
+                            realm.delete(Tick.class);
+                            for (List<Float> tick : result.chartData) {
+                                realm.copyToRealm(new Tick(tick.get(0), tick.get(1)));
                             }
 
                             EventBus.getDefault().post(new MessageEvent(EVENT_CHART_DATA_UPDATED));
@@ -145,7 +146,7 @@ public class Api implements IEvent {
 
 
             @Override
-            public void onFailure(Call<Result<List<List<Integer>>>> call, Throwable t) {
+            public void onFailure(Call<Result> call, Throwable t) {
 
                 Log.e("XXX", "url: " + call.request().url().toString());
                 EventBus.getDefault().post(new MessageEvent(EVENT_NETWORK_CONNECTION_ERROR));
