@@ -1,9 +1,13 @@
 package com.app4each.balance.view;
 
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +18,25 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.app4each.balance.R;
+import com.app4each.balance.model.Tick;
 import com.app4each.balance.view.adapters.RecyclerViewAdapter;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 
-public class ScrollingActivity extends AppCompatActivity {
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
+public class ScrollingActivity extends AppCompatActivity implements RealmChangeListener{
+
+
+    private LineChart mChart;
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mRecyclerAdapter;
     private GridLayoutManager mManager;
@@ -51,10 +68,10 @@ public class ScrollingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab =  findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,6 +89,8 @@ public class ScrollingActivity extends AppCompatActivity {
 
         mRecyclerView = findViewById(R.id.recyclerView);
         refreshRecycler();
+
+        initChart();
 
     }
 
@@ -96,6 +115,102 @@ public class ScrollingActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //*************************************/
+    // private methods
+    //*************************************/
+    private void initChart(){
+        mChart =  findViewById(R.id.chart);
+        mChart.setDrawGridBackground(true);
+
+        // no description text
+        mChart.getDescription().setEnabled(false);
+
+        // enable touch gestures
+        mChart.setTouchEnabled(true);
+
+        // enable scaling and dragging
+        mChart.setDragEnabled(false);
+        mChart.setScaleEnabled(false);
+        // mChart.setScaleXEnabled(true);
+        // mChart.setScaleYEnabled(true);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart.setPinchZoom(false);
+
+        // set an alternative background color
+        mChart.setBackgroundColor(Color.GRAY);
+
+        updateChartData();
+    }
+
+
+    private void updateChartData() {
+
+
+
+        //for (int i = 0; i < count; i++) {
+
+        //    float val = (float) (Math.random() * range) + 3;
+        //    values.add(new Entry(i, val, getResources().getDrawable(R.drawable.star)));
+        //}
+
+
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Tick> ticks = realm.where(Tick.class).findAll();
+        ArrayList<Entry> values = new ArrayList<Entry>();
+
+        for (Tick tick : ticks) {
+            values.add(new Entry(tick.min, tick.max));
+        }
+
+        LineDataSet set1;
+
+        if (mChart.getData() != null &&
+                mChart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet)mChart.getData().getDataSetByIndex(0);
+            set1.setValues(values);
+            mChart.getData().notifyDataChanged();
+            mChart.notifyDataSetChanged();
+        } else {
+            // create a dataset and give it a type
+            set1 = new LineDataSet(values, "DataSet 1");
+
+            set1.setDrawIcons(false);
+
+            // set the line to be drawn like this "- - - - - -"
+            set1.enableDashedLine(10f, 5f, 0f);
+            set1.enableDashedHighlightLine(10f, 5f, 0f);
+            set1.setColor(Color.BLACK);
+            set1.setCircleColor(Color.BLACK);
+            set1.setLineWidth(1f);
+            set1.setCircleRadius(3f);
+            set1.setDrawCircleHole(false);
+            set1.setValueTextSize(9f);
+            set1.setDrawFilled(true);
+            set1.setFormLineWidth(1f);
+            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+            set1.setFormSize(15.f);
+
+//            if (Utils.getSDKInt() >= 18) {
+//                // fill drawable only supported on api level 18 and above
+//                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
+//                set1.setFillDrawable(drawable);
+//            }
+//            else {
+                set1.setFillColor(Color.BLACK);
+//            }
+
+            ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+            dataSets.add(set1); // add the datasets
+
+            // create a data object with the datasets
+            LineData data = new LineData(dataSets);
+
+            // set data
+            mChart.setData(data);
+        }
+    }
+
     private void refreshRecycler() {
 
         mRecyclerView.setLayoutManager(null);
@@ -105,5 +220,15 @@ public class ScrollingActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mRecyclerAdapter);
         mRecyclerAdapter.notifyDataSetChanged();
 
+    }
+
+
+    //*************************************/
+    // Realm DB Change Listener
+    //*************************************/
+    @Override
+    public void onChange(Object element) {
+        updateChartData();
+        mRecyclerAdapter.notifyDataSetChanged();
     }
 }

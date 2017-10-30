@@ -63,7 +63,7 @@ public class Api implements IEvent {
         return sInstnce;
     }
 
-    public static void getBalance() {
+    public static void updateBalance() {
 
 
         if (sInstnce == null) {
@@ -108,7 +108,7 @@ public class Api implements IEvent {
                 });
     }
 
-    public static void getChart() {
+    public static void updateChart() {
 
         if (sInstnce == null) {
             throw new ExceptionInInitializerError("Must call init() first!");
