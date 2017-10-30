@@ -1,4 +1,4 @@
-package com.app4each.balance.view;
+package com.app4each.balance.view.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +23,7 @@ import com.app4each.balance.R;
 import com.app4each.balance.model.Balance;
 import com.app4each.balance.model.Tick;
 import com.app4each.balance.model.Token;
+import com.app4each.balance.view.SearchActivity;
 import com.app4each.balance.view.adapters.RecyclerViewAdapter;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -140,7 +141,6 @@ public class MainFragment extends Fragment implements RealmChangeListener {
         super.onResume();
         // Add watcher for DB changes
         Realm.getDefaultInstance().addChangeListener(this);
-
     }
 
     @Override

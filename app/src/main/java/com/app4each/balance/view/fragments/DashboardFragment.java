@@ -1,4 +1,4 @@
-package com.app4each.balance.view;
+package com.app4each.balance.view.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
