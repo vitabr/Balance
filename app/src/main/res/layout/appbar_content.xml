@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/app_title_balance"
+        android:id="@+id/tvBalance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -39,12 +39,12 @@
         android:layout_marginEnd="3dp"
         android:layout_marginRight="3dp"
         android:src="@drawable/triangle_down"
-        app:layout_constraintBottom_toBottomOf="@+id/app_title_amplitude"
-        app:layout_constraintEnd_toStartOf="@+id/app_title_amplitude"
-        app:layout_constraintTop_toTopOf="@+id/app_title_amplitude" />
+        app:layout_constraintBottom_toBottomOf="@+id/tvChange"
+        app:layout_constraintEnd_toStartOf="@+id/tvChange"
+        app:layout_constraintTop_toTopOf="@+id/tvChange" />
 
     <TextView
-        android:id="@+id/app_title_amplitude"
+        android:id="@+id/tvChange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -53,7 +53,7 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_title_balance" />
+        app:layout_constraintTop_toBottomOf="@+id/tvBalance" />
 
     <ImageView
         android:id="@+id/app_checkbox"
@@ -63,7 +63,7 @@
         android:src="@drawable/swipe"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_title_amplitude" />
+        app:layout_constraintTop_toBottomOf="@+id/tvChange" />
 
     <TextView
         android:id="@+id/app_title_alltime"

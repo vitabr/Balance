@@ -17,18 +17,18 @@ import com.app4each.balance.view.adapters.RecyclerViewAdapter;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 
 /**
  * Created by vito on 30/10/2017.
  */
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements RealmChangeListener<Realm> {
 
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mRecyclerAdapter;
     private LinearLayoutManager mManager;
-    private ArrayList<String> mList = new ArrayList<>();
 
     public MainFragment() {
 
@@ -38,11 +38,6 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mList.add("DollarCoin");
-        mList.add("BitCoin");
-        mList.add("HuinyaCoin");
-        mList.add("Etherium");
 
         /*setRetainInstance(true);*/
     }
@@ -67,13 +62,14 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Realm.getDefaultInstance().addChangeListener(this);
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        Realm.getDefaultInstance().removeChangeListener(this);
     }
 
     @Override
@@ -94,4 +90,11 @@ public class MainFragment extends Fragment {
         return recyclerView;
     }
 
+    //*************************************
+    // Realm DB Change Listener
+    //*************************************
+    @Override
+    public void onChange(Realm element) {
+        mRecyclerAdapter.notifyDataSetChanged();
+    }
 }

@@ -9,17 +9,15 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.app4each.balance.R;
+import com.app4each.balance.model.Balance;
 import com.app4each.balance.model.Tick;
-import com.app4each.balance.view.adapters.RecyclerViewAdapter;
 import com.app4each.balance.view.adapters.ViewPagerAdapter;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -45,8 +43,9 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
     private DashboardFragment viewFagment;
     private SettingsFragment settingsFragment;
     private MenuItem prevMenuItem;
-    private Toolbar toolbar;
     private AppBarLayout mAppbar;
+    private TextView mTvBalance;
+    private TextView mTvChange;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -83,6 +82,9 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
         setContentView(R.layout.activity_scrolling);
        /* Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
+
+       mTvBalance = findViewById(R.id.tvBalance);
+       mTvChange = findViewById(R.id.tvChange);
 
         viewPager = findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -131,6 +133,8 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
             }
         });
 
+
+        updateInfoPanel();
         initChart();
 
     }
@@ -149,26 +153,6 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
         Realm.getDefaultInstance().removeChangeListener(this);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-       // getMenuInflater().inflate(R.menu.menu_scrolling, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-       // int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-      //  if (id == R.id.action_settings) {
-        //    return true;
-        //}
-        return true;
-    }
 
     //*************************************/
     // private methods
@@ -276,7 +260,11 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
         }
     }
 
-
+    private void updateInfoPanel() {
+        Balance balance = Realm.getDefaultInstance().where(Balance.class).findFirst();
+        mTvBalance.setText(""+balance.totalBalance);
+        mTvChange.setText(""+balance.usdChange);
+    }
 
 
     //*************************************/
@@ -285,6 +273,6 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
     @Override
     public void onChange(Object element) {
         updateChartData();
-        //mRecyclerAdapter.notifyDataSetChanged();
+        updateInfoPanel();
     }
 }
