@@ -1,33 +1,31 @@
 package com.app4each.balance.view;
 
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.app4each.balance.R;
 import com.app4each.balance.model.Tick;
 import com.app4each.balance.view.adapters.RecyclerViewAdapter;
+import com.app4each.balance.view.adapters.ViewPagerAdapter;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -35,14 +33,21 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
+/**
+ * Created by vito on 30/10/2017.
+ */
 public class ScrollingActivity extends AppCompatActivity implements RealmChangeListener{
 
 
     private LineChart mChart;
-    private RecyclerView mRecyclerView;
-    private RecyclerViewAdapter mRecyclerAdapter;
-    private GridLayoutManager mManager;
-    private ArrayList<String> mList = new ArrayList<>();
+    private ViewPager viewPager;
+    private MainFragment mainFragment;
+    private DashboardFragment viewFagment;
+    private SettingsFragment settingsFragment;
+    private MenuItem prevMenuItem;
+    private Toolbar toolbar;
+    private AppBarLayout mAppbar;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -51,14 +56,20 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    Toast.makeText(ScrollingActivity.this, "message 1", Toast.LENGTH_LONG).show();
+
+                    viewPager.setCurrentItem(0);
+                    mAppbar.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_dashboard:
-                    Toast.makeText(ScrollingActivity.this, "message 2", Toast.LENGTH_LONG).show();
+
+                    viewPager.setCurrentItem(1);
+                    mAppbar.setVisibility(View.GONE);
                     return true;
                 case R.id.navigation_notifications:
 
-                    Toast.makeText(ScrollingActivity.this, "message 3", Toast.LENGTH_LONG).show();
+                    viewPager.setCurrentItem(2);
+
+                    mAppbar.setVisibility(View.GONE);
                     return true;
             }
             return false;
@@ -70,27 +81,55 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
-        Toolbar toolbar =  findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+       /* Toolbar toolbar =  findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
+
+        viewPager = findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+
+        mAppbar = findViewById(R.id.app_bar);
 
         FloatingActionButton fab =  findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Toast.makeText(ScrollingActivity.this, "" + mList.size(), Toast.LENGTH_LONG).show();
-                mList.add("new Record");
-                mRecyclerAdapter.notifyDataSetChanged();
-
             }
         });
 
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        mRecyclerView = findViewById(R.id.recyclerView);
-        refreshRecycler();
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                if (position == 0){
+
+                    mAppbar.setVisibility(View.VISIBLE);
+                }else{
+                    mAppbar.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onPageSelected(int position) {
+                if (prevMenuItem != null) {
+                    prevMenuItem.setChecked(false);
+                } else {
+                    navigation.getMenu().getItem(0).setChecked(false);
+                }
+                Log.d("page", "onPageSelected: " + position);
+                navigation.getMenu().getItem(position).setChecked(true);
+
+                prevMenuItem = navigation.getMenu().getItem(position);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         initChart();
 
@@ -113,7 +152,7 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_scrolling, menu);
+       // getMenuInflater().inflate(R.menu.menu_scrolling, menu);
         return true;
     }
 
@@ -122,18 +161,30 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+       // int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+      //  if (id == R.id.action_settings) {
+        //    return true;
+        //}
+        return true;
     }
 
     //*************************************/
     // private methods
     //*************************************/
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        mainFragment = new MainFragment();
+        viewFagment = new DashboardFragment();
+        settingsFragment = new SettingsFragment();
+        adapter.addFragment(mainFragment);
+        adapter.addFragment(viewFagment);
+        adapter.addFragment(settingsFragment);
+        viewPager.setAdapter(adapter);
+    }
+
     private void initChart(){
         mChart =  findViewById(R.id.chart);
         mChart.setDrawGridBackground(false);
@@ -225,16 +276,7 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
         }
     }
 
-    private void refreshRecycler() {
 
-        mRecyclerView.setLayoutManager(null);
-        mManager = new GridLayoutManager(ScrollingActivity.this, 1);
-        mRecyclerView.setLayoutManager(mManager);
-        mRecyclerAdapter = new RecyclerViewAdapter(mList);
-        mRecyclerView.setAdapter(mRecyclerAdapter);
-        mRecyclerAdapter.notifyDataSetChanged();
-
-    }
 
 
     //*************************************/
@@ -243,6 +285,6 @@ public class ScrollingActivity extends AppCompatActivity implements RealmChangeL
     @Override
     public void onChange(Object element) {
         updateChartData();
-        mRecyclerAdapter.notifyDataSetChanged();
+        //mRecyclerAdapter.notifyDataSetChanged();
     }
 }

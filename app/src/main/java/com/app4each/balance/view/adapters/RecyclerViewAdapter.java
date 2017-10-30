@@ -7,9 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.app4each.balance.R;
-
 import java.util.ArrayList;
 
 /**
@@ -31,6 +29,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView title;
+        TextView rate;
+        TextView balance;
+        TextView amplitude;
         Context mContext;
         //Create viewHolder Constructor
 
@@ -47,7 +48,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 }
             });
 
-            title = v.findViewById(R.id.title_card);
+            title = v.findViewById(R.id.titleCoin);
+            balance = v.findViewById(R.id.titleBalance);
+            amplitude = v.findViewById(R.id.titleAmplitude);
+            rate = v.findViewById(R.id.titleRate);
 
 
         }
@@ -71,6 +75,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder mHolder, int position) {
 
         mHolder.title.setText(mTempList.get(position));
+        mHolder.balance.setText(mTempList.get(position));
+        mHolder.rate.setText(mTempList.get(position));
+        mHolder.amplitude.setText(mTempList.get(position));
 
 
     }
