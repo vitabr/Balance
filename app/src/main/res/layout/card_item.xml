@@ -32,22 +32,23 @@
 
         <ImageView
             android:id="@+id/iconCoin"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:src="@drawable/triangle"
+            android:scaleType="fitXY"
+            android:src="@drawable/empty"
             card_view:layout_constraintBottom_toTopOf="@+id/guideline"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="@+id/guideline" />
 
         <TextView
-            android:id="@+id/titleCoin"
+            android:id="@+id/tokenName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
             android:layout_marginLeft="3dp"
-            android:text="DollarCoin"
+            android:text="token name"
             android:textColor="@color/mainText"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -57,12 +58,12 @@
             card_view:layout_constraintVertical_bias="0.428" />
 
         <TextView
-            android:id="@+id/titleRate"
+            android:id="@+id/valPerToken"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:text="alleluya"
+            android:text="token value"
             android:textColor="@color/mainText"
             card_view:layout_constraintBottom_toTopOf="@+id/guideline2"
             card_view:layout_constraintStart_toStartOf="parent"
@@ -74,21 +75,21 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="2dp"
             android:layout_marginRight="2dp"
-            android:text="alleluya"
+            android:text="30 BTC"
             android:textColor="@color/mainText"
             card_view:layout_constraintBottom_toTopOf="@+id/guideline2"
-            card_view:layout_constraintEnd_toStartOf="@+id/titleCost"
+            card_view:layout_constraintEnd_toStartOf="@+id/balance"
             card_view:layout_constraintTop_toTopOf="@+id/guideline2"
             card_view:layout_constraintVertical_bias="0.578" />
 
         <TextView
-            android:id="@+id/titleAmplitude"
+            android:id="@+id/change"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="alleluya"
+            android:text="change val"
             android:textColor="@color/textAmplitudeUp"
             android:textSize="19sp"
             card_view:layout_constraintBottom_toTopOf="@+id/guideline"
@@ -96,26 +97,26 @@
             card_view:layout_constraintTop_toTopOf="@+id/guideline" />
 
         <TextView
-            android:id="@+id/titleCost"
+            android:id="@+id/balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="alleluya"
+            android:text="(tot USD val)"
             android:textColor="@color/textGray"
             android:textSize="13sp"
             card_view:layout_constraintBottom_toTopOf="@+id/guideline2"
-            card_view:layout_constraintEnd_toEndOf="@+id/titleAmplitude"
+            card_view:layout_constraintEnd_toEndOf="@+id/change"
             card_view:layout_constraintTop_toTopOf="@+id/guideline2" />
 
         <ImageView
-            android:id="@+id/iconAmplitude"
+            android:id="@+id/iconDirection"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_marginEnd="3dp"
             android:layout_marginRight="3dp"
             android:src="@drawable/triangle_up"
             card_view:layout_constraintBottom_toTopOf="@+id/guideline"
-            card_view:layout_constraintEnd_toStartOf="@+id/titleAmplitude"
+            card_view:layout_constraintEnd_toStartOf="@+id/change"
             card_view:layout_constraintTop_toTopOf="@+id/guideline"
             card_view:layout_constraintVertical_bias="0.6" />
 

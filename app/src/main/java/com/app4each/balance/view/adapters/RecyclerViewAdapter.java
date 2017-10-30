@@ -1,14 +1,23 @@
 package com.app4each.balance.view.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.app4each.balance.App;
 import com.app4each.balance.R;
-import java.util.ArrayList;
+import com.app4each.balance.model.Token;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import io.realm.RealmResults;
 
 /**
  * Created by vito on 30/10/2017.
@@ -16,11 +25,11 @@ import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private static ArrayList<String> mTempList;
+    private static RealmResults<Token> mTokens;
 
 
-    public RecyclerViewAdapter(ArrayList<String> movies) {
-        this.mTempList = movies;
+    public RecyclerViewAdapter(RealmResults<Token> tokens) {
+        this.mTokens = tokens;
     }
 
     //Holder
@@ -28,12 +37,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title;
-        TextView rate;
+        ImageView iconCoin;
+        ImageView iconDirection;
+        TextView name;
+        TextView valPerToken;
         TextView balance;
-        TextView amplitude;
+        TextView change;
+
         Context mContext;
-        //Create viewHolder Constructor
 
         public ViewHolder(final View v) {
             super(v);
@@ -47,12 +58,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     Toast.makeText(mContext,"Clicked",Toast.LENGTH_LONG).show();
                 }
             });
-
-            title = v.findViewById(R.id.titleCoin);
-            balance = v.findViewById(R.id.titleBalance);
-            amplitude = v.findViewById(R.id.titleAmplitude);
-            rate = v.findViewById(R.id.titleRate);
-
+            iconCoin = v.findViewById(R.id.iconCoin);
+            iconDirection = v.findViewById(R.id.iconDirection);
+            name = v.findViewById(R.id.tokenName);
+            change = v.findViewById(R.id.change);
+            balance = v.findViewById(R.id.balance);
+            valPerToken = v.findViewById(R.id.valPerToken);
 
         }
     }
@@ -66,7 +77,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         ViewHolder mHolder = new ViewHolder(v);
 
-
         return mHolder;
     }
 
@@ -74,16 +84,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder mHolder, int position) {
 
-        mHolder.title.setText(mTempList.get(position));
-        mHolder.balance.setText(mTempList.get(position));
-        mHolder.rate.setText(mTempList.get(position));
-        mHolder.amplitude.setText(mTempList.get(position));
+        Token token = mTokens.get(position);
+        mHolder.name.setText(token.tokenName);
+        mHolder.balance.setText(""+token.balance);
+        mHolder.valPerToken.setText(""+token.usdValuePerToken);
+        mHolder.change.setText("("+token.usdChange+")");
 
+
+        mHolder.change.setTextColor((token.usdChange<0)?Color.RED:Color.GREEN);
+        mHolder.iconDirection.setImageResource((token.usdChange<0)?R.drawable.triangle_down:R.drawable.triangle_up);
+
+        if(TextUtils.isEmpty(token.iconUrl)){
+            mHolder.iconCoin.setVisibility(View.GONE);
+        }else{
+            Glide.with(App.getAppContext())
+                    .load(token.iconUrl)
+                    .fitCenter()
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .error(R.drawable.empty)
+                    .placeholder(R.drawable.empty)
+                    .into(mHolder.iconCoin);
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return mTempList.size();
+        return mTokens.size();
     }
 }
