@@ -8,9 +8,7 @@ import io.realm.RealmObject;
  */
 
 public class Balance extends RealmObject {
-
     public RealmList<Token> balances;
-
     public double totalBalance;
     public double usdChange;
 

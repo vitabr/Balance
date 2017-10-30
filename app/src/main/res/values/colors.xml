@@ -7,4 +7,6 @@
     <color name="textAmplitudeUp">#00E676</color>
     <color name="textAmplitudeDown">#C62828</color>
     <color name="textGray">#78909C</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

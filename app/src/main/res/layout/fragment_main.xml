@@ -1,13 +1,219 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
     tools:context="com.app4each.balance.view.ScrollingActivity">
 
-    <include layout="@layout/content_scrolling"
-        />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/white"
+        app:borderWidth="0dp"
+        app:elevation="3dp"
+        app:layout_anchor="@id/mainSheet"
+        app:layout_anchorGravity="top|end"
+        app:srcCompat="@drawable/ic_action_add" />
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/colorPrimary"
+        app:layout_anchor="@+id/header"
+        app:layout_anchorGravity="bottom">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/header_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/app_bar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/your_portfolio_balance"
+                android:textColor="@color/textGray"
+                android:textSize="10sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="$22989.50"
+                android:textColor="@color/mainText"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/app_bar_title" />
+
+            <ImageView
+                android:id="@+id/ivIconDirection"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginRight="3dp"
+                android:src="@drawable/triangle_down"
+                app:layout_constraintBottom_toBottomOf="@+id/tvChange"
+                app:layout_constraintEnd_toStartOf="@+id/tvChange"
+                app:layout_constraintTop_toTopOf="@+id/tvChange" />
+
+            <TextView
+                android:id="@+id/tvChange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="-$5875.36"
+                android:textColor="@color/textAmplitudeDown"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBalance" />
+
+            <ImageView
+                android:id="@+id/app_checkbox"
+                android:layout_width="30dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/swipe"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvChange" />
+
+            <TextView
+                android:id="@+id/app_title_alltime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:text="All Time"
+                android:textColor="@color/mainText"
+                app:layout_constraintBottom_toBottomOf="@+id/app_checkbox"
+                app:layout_constraintEnd_toStartOf="@+id/app_checkbox"
+                app:layout_constraintTop_toTopOf="@+id/app_checkbox" />
+
+            <TextView
+                android:id="@+id/app_title_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:text="Last 24h"
+                android:textColor="@color/textGray"
+                app:layout_constraintBottom_toBottomOf="@+id/app_checkbox"
+                app:layout_constraintStart_toEndOf="@+id/app_checkbox"
+                app:layout_constraintTop_toTopOf="@+id/app_checkbox" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/chart_height"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header_info" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity=""
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/main_triangle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvHeaderBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:text="$22989.50"
+            android:textColor="@color/mainText"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivHeaderDirection"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:src="@drawable/triangle_down"
+            app:layout_constraintBottom_toBottomOf="@+id/tvHeaderChange"
+            app:layout_constraintEnd_toStartOf="@+id/tvHeaderChange"
+            app:layout_constraintTop_toTopOf="@+id/tvHeaderChange" />
+
+        <TextView
+            android:id="@+id/tvHeaderChange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:text="-$5875.36"
+            android:textColor="@color/textAmplitudeDown"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.462"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.523" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <RelativeLayout
+        android:id="@+id/mainSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingBottom="?attr/actionBarSize"
+        android:paddingTop="?attr/actionBarSize"
+        app:behavior_peekHeight="200dp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>
